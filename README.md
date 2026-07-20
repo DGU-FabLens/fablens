@@ -85,3 +85,18 @@ python -m pip install -e .
 2. wafer-stage profiling
 3. Feature Schema 결정
 
+## 👥 Team
+
+### 👨 강민수 | Decision & System
+
+- SPC(Shewhart Control Chart) 구현
+- Rule-based Inspection Recommendation 구현
+- Inspection Ratio–Detection Rate Trade-off 분석
+- Streamlit Dashboard 개발 및 전체 시스템 통합
+
+### 👩 김민지 | Data & ML
+
+- CMP 센서 데이터 전처리 및 Feature Engineering
+- Virtual Metrology(MRR Prediction) 모델 개발
+- Time-aware Validation을 통한 모델 성능 평가
+- SHAP 기반 예측 결과 설명 및 원인 후보 분석
