@@ -1,0 +1,43 @@
+# FabLens 데이터 분할 설정 (TD-002)
+#
+# 원칙:
+#   - 시간순 train/validation/test를 대표 평가로 사용합니다.
+#   - 동일 wafer-stage는 반드시 하나의 split에만 속합니다.
+#   - random split은 참고용 보조 실험이며 대표 성능으로 보고하지 않습니다.
+
+method: chronological
+
+# wafer-stage를 시간 순서로 정렬할 때 사용할 기준
+# (각 wafer-stage 그룹의 최초 TIMESTAMP. 중복 0건 확인됨)
+order_by: first_ts
+
+ratios:
+  train: 0.6
+  validation: 0.2
+  test: 0.2
+
+# 경계 buffer (DL-20260720-005)
+# wafer-stage 1,981건 중 870건(43.9%)이 직전 그룹 종료 전에 시작합니다.
+# 멀티 챔버 장비라 여러 웨이퍼가 동시에 처리되기 때문입니다.
+# 경계에서 시간이 겹치는 샘플은 split='buffer'로 표시하고 학습·평가에 쓰지 않습니다.
+boundary_buffer:
+  enabled: true
+  # 판정 방식: 경계 앞 구간의 last_ts보다 first_ts가 이른 샘플을 buffer로 분류
+  method: time_overlap
+  # 추가 여유 폭(초). 실제 중첩 길이 분포를 보고 확정 (미확정)
+  extra_margin_sec: 0
+
+# 참고용 보조 실험
+random_split:
+  enabled: true
+  purpose: "성능 과대평가 가능성 확인용 참고 자료 (TD-002)"
+
+seed: 42
+
+# 산출물: 어떤 wafer-stage가 어느 split인지 기록 (TD-010 재현성)
+manifest_columns:
+  - WAFER_ID
+  - STAGE
+  - first_ts
+  - order_index
+  - split      # train / validation / test / buffer

@@ -16,13 +16,27 @@ Removal Rate(MRR)를 예측하고, 기본 SPC와 규칙 기반 판정으로 추�
 
 ## 현재 상태
 
-완료된 내용은 프로젝트 기획 문서 정리, PHM 2016 CMP training 데이터 확보, 기본
-데이터셋 폴더 구성 확인입니다. 현재는 2인 협업을 위한 저장소와 Python 패키지의
-기본 구조를 초기화한 단계입니다.
+**공통 초기 세팅까지 완료된 단계입니다.** 완료된 내용은 프로젝트 기획 문서 정리,
+PHM 2016 CMP training 데이터 확보, 공통 실행 환경(`requirements.txt`)과 설정
+파일(`config/`) 구성, 원본 프로파일링 스크립트, 팀 간 데이터 계약 문서입니다.
 
-데이터 로더, 자동 데이터 검증, wafer-stage Feature Table, 시간순 분할, Virtual
-Metrology 모델, SPC, SHAP, 계측 우선순위 및 Dashboard는 아직 구현되지 않았으며
-향후 개발할 예정입니다.
+wafer-stage Feature Table, 시간순 분할, Virtual Metrology 모델, SPC, SHAP,
+계측 우선순위 및 Dashboard는 아직 구현되지 않았으며 각 담당자가 개발할 예정입니다.
+
+### 원본 데이터에서 확인된 사실
+
+`scripts/01_profile_raw.py` 실행 결과이며, 이후 모든 단계의 검증 기준값입니다.
+
+| 항목 | 값 |
+|---|---|
+| trace row | 672,744 |
+| 고유 wafer-stage | 1,981 (라벨과 1:1, **Join 누락 0건**) |
+| 결측 | 원본 25개 컬럼 **전부 0건** |
+| 조건 구분 | `STAGE` A 1,166 / B 815, `chamber_group` G123 368 / G456 1,613 |
+
+`CHAMBER`는 wafer-stage 안에서 고정값이 아니라 1→2→3 또는 4→5→6으로 변하며, 이
+계열 구분이 Stage A의 이봉분포를 설명합니다. 근거와 후속 결정은
+`docs/decisions/02_DECISION_LOG.md`에 있습니다.
 
 ## 데이터와 분석 단위
 
@@ -49,18 +63,52 @@ reports/                데이터 및 실험 보고서
 docs/                   프로젝트 기준·결정·참고·연구 문서
 ```
 
-## Python 환경
+## 환경 세팅
 
-Python 3.11 이상을 사용합니다.
+Python 3.11 이상을 사용합니다. 팀원 모두 아래 절차로 동일한 환경을 만듭니다.
+
+**macOS / Linux**
+
+```bash
+# XGBoost가 OpenMP 런타임을 요구합니다 (macOS만 해당)
+brew install libomp
+
+python3 -m venv .venv
+.venv/bin/python -m pip install --upgrade pip
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python -m pip install -e . --no-deps
+```
+
+**Windows (PowerShell)**
 
 ```powershell
 python -m venv .venv
 .venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
-python -m pip install -e .
+python -m pip install -r requirements.txt
+python -m pip install -e . --no-deps
 ```
 
-현재 의존성은 초기 구조에 필요한 최소 수준으로 제한되어 있습니다.
+### 원본 데이터
+
+원본 CSV는 라이선스상 저장소에 포함하지 않습니다(`.gitignore` 제외 대상).
+팀 내부 공유본을 받아 아래 위치에 두어야 합니다.
+
+```text
+data/raw/phm2016_cmp/
+├── CMP-training-removalrate.csv
+└── training/CMP-training-000.csv ... 184.csv   (185개)
+```
+
+### 세팅 확인
+
+```bash
+.venv/bin/python -m pytest -q          # 설정·데이터 경로 검증
+.venv/bin/python scripts/01_profile_raw.py
+```
+
+프로파일링이 정상이면 `고유 wafer-stage: 1,981`, `Join 누락 0건`이 출력되고
+`reports/data_profile/`에 결과가 저장됩니다.
 
 ## 기준 문서
 
@@ -81,9 +129,16 @@ python -m pip install -e .
 
 ## 다음 단계
 
-1. 원본 데이터 자동 검증
-2. wafer-stage profiling
-3. Feature Schema 결정
+공통 세팅은 끝났고, 아래부터는 담당별로 나뉩니다.
+
+| 담당 | 다음 작업 |
+|---|---|
+| 김민지 (Data & ML) | wafer-stage Feature Table 생성 → 시간순 Split → VM 모델 비교 |
+| 강민수 (Decision & System) | 데이터 품질 Flag 정의 → Phase I 기준선 → Shewhart 관리도 |
+| 공통 | `docs/project/06_DATA_CONTRACT.md`의 "합의 필요 항목" 확정 |
+
+산출물 스키마와 경로는 `docs/project/06_DATA_CONTRACT.md`를 따릅니다. 서로의 코드가
+컬럼명을 하드코딩하지 않도록 `data/processed/feature_schema.json`을 읽습니다.
 
 ## 👥 Team
 

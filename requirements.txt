@@ -1,6 +1,32 @@
+# FabLens 공통 실행 환경
+# Python >= 3.11 (pyproject.toml 기준)
+# 설치: pip install -r requirements.txt
+#
+# macOS에서 xgboost를 쓰려면 OpenMP 런타임이 먼저 필요합니다:
+#   brew install libomp
+
+# 데이터 처리
 pandas>=2.2,<3.0
 numpy>=1.26,<3.0
+pyarrow>=16.0
+
+# 설정
 PyYAML>=6.0,<7.0
+
+# 모델링 / 평가
+scikit-learn>=1.5,<2.0
+xgboost>=2.1,<4.0          # GBDT (DL-20260720-001)
+
+# 시각화
+matplotlib>=3.8,<4.0
+seaborn>=0.13,<0.14
+
+# 설명 가능성 (P1)
+shap>=0.45,<1.0
+
+# Dashboard (P0)
+streamlit>=1.36,<2.0
+
+# 개발 도구
 pytest>=8.0,<9.0
 ruff>=0.6,<1.0
-

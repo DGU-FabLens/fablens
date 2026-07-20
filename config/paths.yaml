@@ -1,0 +1,34 @@
+# FabLens 경로 설정
+# 모든 경로는 저장소 루트 기준 상대 경로입니다.
+# 코드에서 경로를 하드코딩하지 않고 fablens.utils.config.load_paths()로 읽습니다.
+
+raw:
+  root: data/raw/phm2016_cmp
+  trace_dir: data/raw/phm2016_cmp/training
+  trace_glob: "CMP-training-*.csv"
+  removal_rate: data/raw/phm2016_cmp/CMP-training-removalrate.csv
+
+interim:
+  root: data/interim
+  # 185개 trace CSV를 concat한 정렬 완료 시계열
+  traces_concat: data/interim/traces_concat.parquet
+  # wafer-stage 단위로 라벨을 merge한 테이블
+  wafer_stage: data/interim/wafer_stage.parquet
+
+processed:
+  root: data/processed
+  # 모델 입력용 최종 Feature Table (스키마는 06_DATA_CONTRACT.md 참조)
+  feature_table: data/processed/feature_table.parquet
+  # 시간순 split 결과 (wafer-stage별 train/val/test 배정)
+  split_manifest: data/processed/split_manifest.csv
+
+reports:
+  data_profile: reports/data_profile
+  experiment_reports: reports/experiment_reports
+
+artifacts:
+  models: artifacts/models
+  predictions: artifacts/predictions
+  metrics: artifacts/metrics
+  figures: artifacts/figures
+  shap: artifacts/shap
