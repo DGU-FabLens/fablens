@@ -1,0 +1,41 @@
+# Python and environments
+.venv/
+venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.env
+
+# IDE and operating systems
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Notebooks and logs
+.ipynb_checkpoints/
+logs/
+*.log
+
+# Raw CSV data
+data/raw/phm2016_cmp/training/*.csv
+data/raw/phm2016_cmp/CMP-training-removalrate.csv
+
+# Generated data
+data/interim/*
+data/processed/*
+
+# Generated artifacts and reports
+artifacts/models/*
+artifacts/predictions/*
+artifacts/metrics/*
+artifacts/figures/*
+artifacts/shap/*
+reports/data_profile/*
+reports/experiment_reports/*
+
+# Keep empty directory markers
+!.gitkeep
+
